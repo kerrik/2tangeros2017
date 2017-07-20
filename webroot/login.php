@@ -33,7 +33,7 @@ if( $user->logged_in()){
     $tango->main_content( <<<EOD
         <p><input type='submit' name='nyanmalan' value='Skapa ny anmälan'/></p>
          
-        <p><label>Redan anmäld? Kolla din anmälan</label></p>
+        <p><label>Redan anmäld? Kolla din anmälan genom att logga in</label></p>
         <p><label>Email:<br/><input type='text' name='acronym' value='' autocomplete='off'/></label></p>
         <p><label>Lösenord:<br/><input type='password' name='password' value=''/></label></p>
         <p><input type='submit' name='login' value='Login'/>

@@ -42,7 +42,6 @@ function driverinfo() {
     $current_driver = new CAnmalan;
     $selected_driver = $current_driver->id();
 //#####################################################################
-
 //    $content = "<div id='form-driver'>\n";
 //    $content .= "<form id='select-driver' action='' method='post'>\n";
 //    $content .= "<fieldset>\n";
@@ -77,6 +76,12 @@ function driverinfo() {
     $content .= "<legend>Anmälan</legend>\n";
     $content .= "<input type='hidden' name='use_driver' value={$current_driver->id()}>\n";
     $content .= "<div class='driver-form-row'>\n";
+    if ($selected_driver > 0) {
+
+        $content .= "<div class='driver-form-row'>\n";
+        $content .= "<div class='driver-form-label'>\n<label>\nDu är anmäld till Svinnock tangomaraton med följande val  \n</label>\n</div>\n";
+        $content .= "</div>\n";
+    }
     $content .= "<div class='driver-form-label'>\n<label>\nFörnamn  \n</label>\n</div>\n";
     $content .= "<div class='driver-form-input'>\n<input id='name' type='text' name='name' value='{$current_driver->name()}' autocomplete='off'>\n";
     $content .= "</div>\n";
@@ -99,23 +104,27 @@ function driverinfo() {
         $content .= "<div class='driver-form-input'>\n<input id='password_check' type='text' name='password_check' value='' autocomplete='off'>\n</div>\n\n";
         $content .= "</div>\n";
     }
-    $counter = 0;
+    $counter = -1;
 //här kommer fälten från user-posten
     foreach ($current_driver->driver_data($selected_driver) as $driver_data) {
-        $content .= "<div class='driver-form-row'>\n";
-        $content .= "<div class='driver-form-label'>\n<label>\n{$driver_data->user_data_descr}  \n</label>\n</div>";
-        $content .= "<div class='driver-form-label'>\n";
-        if($driver_data->type == 0){
-            $content .= "<input type='text' name='value[{$counter}]' value='{$driver_data->value}' autocomplete='off'>\n";
-        } else {
-            $checked = isset($driver_data->value)?'checked':'';
-            $content .= "<input type='checkbox' name='value[{$counter}]'  $checked >\n";
+        $counter = ($driver_data->type <2)?$counter +1 : $counter;
+        if ($driver_data->type >= 0) {
+            $content .= "<div class='driver-form-row'>\n";
+            $content .= "<div class='driver-form-label'>\n<label>\n{$driver_data->user_data_descr}  \n</label>\n</div>";
+            $content .= "<div class='driver-form-label'>\n";
+            if ($driver_data->type == 0) {
+                $content .= "<input type='text' name='value[{$counter}]' value='{$driver_data->value}' autocomplete='off'>\n";
+            } elseif ($driver_data->type == 1) {
+                $checked = isset($driver_data->value) ? 'checked' : '';
+                $content .= "<input type='checkbox' name='value[{$counter}]'  $checked >\n";
+            }elseif ($driver_data->type ==2) {  
+                $content .= "<input type='radio' name='value[{$counter}]'  $checked >\n";
+            }
+            $content .= "<input type='hidden' name='key[{$counter}]' value='{$driver_data->user_data_key}'>\n";
+            $content .= "<input type='hidden' name='user_data_id[{$counter}]' value='{$driver_data->user_data_id}'>\n";
+            $content .= "<input type='hidden' name='post_id[{$counter}]' value='{$driver_data->id}'>\n";
+            $content .= "</div>\n";
         }
-        $content.="<input type='hidden' name='key[]' value='{$driver_data->user_data_descr}'>\n";        
-        $content.="<input type='hidden' name='user_data_id[]' value='{$driver_data->user_data_id}'>\n";
-        $content.="<input type='hidden' name='post_id[]' value='{$driver_data->id}'>\n"; 
-        $content .= "</div>\n";
-        $counter ++;
     }
 
     $content .= "<div class='driver-form-row'>\n";

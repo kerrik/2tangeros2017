@@ -59,9 +59,13 @@ include_once (TANGO_THEME_PATH);
 
 function visa_data() {
     global $user;
-
+    $user_role = intval($user->role());
+    if ($user_role < 1 || $user_role > 9){        
+            $url= 'start';
+            header("location:$url");        
+    }
 //    dump($user, 'User');
-    $bokningar = $user->users();
+    $bokningar = $user->participants();
 //    dump($bokningar);
     foreach ($bokningar as $id => $deltagare) {
 //        dump($deltagare);

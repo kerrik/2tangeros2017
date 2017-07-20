@@ -28,10 +28,14 @@ class CUser {
 
 //end __construct
 
-    public function get_users() {
+    public function get_users($filter = 'null') {
         // Fyller $users med alla användare
         global $db;
-        $sql = 'SELECT * FROM User ORDER BY name;';
+        
+        $filter = isset($filter)?" WHERE role>1":'';
+        
+        $sql = "SELECT * FROM User{$filter} ORDER BY name;";
+        
         $row = $db->query_DB($sql, array(), FALSE);
         if ($row) {
             do {
@@ -48,6 +52,31 @@ class CUser {
         }
         $this->users=(object)$temp_user;
     }
+    
+    public function get_participants($filter = 'null') {
+        // Fyller $users med alla användare
+        global $db;
+        
+        $filter = isset($filter)?" WHERE role>{$filter}":'';
+        
+        $sql = "SELECT * FROM User{$filter} ORDER BY name;";
+        
+        $row = $db->query_DB($sql, array(), FALSE);
+        if ($row) {
+            do {
+                $users[] = $row;
+                $row = $db->fetch_DB();
+            } while (!$row == false);
+        }
+        foreach ($users as $user){
+            $temp_data['acronym']=$user->acronym;
+            $temp_data['name']=$user->name;
+            $temp_data['role']=$user->role;
+            $temp_data['display_name']=$user->display_name;
+            $temp_user[$user->id]=(object)$temp_data;
+        }
+        $this->participants=(object)$temp_user;
+    }
 
     private function get_user_data($id) {
         // Hämtar alla data för en användare
@@ -58,6 +87,7 @@ class CUser {
                   value,
                   value_dec,
                   user_data_key.user_data_id,
+                  user_data_key.user_data_key,
                   user_data.id,
                   user_data_key.type
                   
@@ -133,7 +163,7 @@ class CUser {
 
     public function role() {
         $role = isset($this->user->role)?$this->user->role:0;
-        return$role;
+        return $role;
     }
 
     public function users() {
@@ -153,5 +183,9 @@ class CUser {
         $return = $this->get_user_by_id($id);
         return $return;
     }
-
+    public function participants() {
+        $this->get_participants(1);
+        $return = $this->participants;
+        return $return;
+    }
 }

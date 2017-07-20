@@ -208,7 +208,6 @@ class CAnmalan {
         if(isset($_POST['save'])){
             return TRUE;
         }elseif ( !$user->logged_in() && !isset($_SESSION['nyanmalan'])){  
-            echo 'Är jag här tro?';
             $url= 'login';
             header("location:$url");        
         }else{
